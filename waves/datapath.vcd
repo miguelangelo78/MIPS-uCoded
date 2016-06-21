@@ -1,0 +1,381 @@
+$date
+	Wed Jun 22 00:36:20 2016
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module datapath $end
+$var wire 32 ! address [31:0] $end
+$var wire 32 " data_writedata [31:0] $end
+$var wire 32 # opA [31:0] $end
+$var wire 1 $ zero $end
+$var wire 5 % writereg [4:0] $end
+$var wire 32 & result [31:0] $end
+$var wire 1 ' regwrite $end
+$var wire 32 ( regout2 [31:0] $end
+$var wire 32 ) regout1 [31:0] $end
+$var wire 1 * regdst $end
+$var wire 5 + readreg2 [4:0] $end
+$var wire 5 , readreg1 [4:0] $end
+$var wire 32 - readdata [31:0] $end
+$var wire 32 . prog_writedata [31:0] $end
+$var wire 32 / opB [31:0] $end
+$var wire 1 0 memwrite $end
+$var wire 1 1 memtoreg $end
+$var wire 1 2 memread $end
+$var wire 1 3 jump $end
+$var wire 32 4 instruction [31:0] $end
+$var wire 4 5 func [3:0] $end
+$var wire 32 6 eip_next [31:0] $end
+$var wire 1 7 eip_inc $end
+$var wire 32 8 ctrl [31:0] $end
+$var wire 1 9 branch $end
+$var wire 1 : alusrc $end
+$var wire 2 ; aluop [1:0] $end
+$var reg 1 < clk $end
+$var reg 32 = eip [31:0] $end
+$scope module alu $end
+$var wire 4 > func [3:0] $end
+$var wire 32 ? opA [31:0] $end
+$var wire 32 @ opB [31:0] $end
+$var wire 1 $ zero $end
+$var wire 32 A result [31:0] $end
+$upscope $end
+$scope module datamem $end
+$var wire 32 B address [31:0] $end
+$var wire 1 2 mrd $end
+$var wire 1 0 mwr $end
+$var wire 32 C writedata [31:0] $end
+$var wire 32 D readdata [31:0] $end
+$scope begin $unm_blk_11 $end
+$var integer 32 E i [31:0] $end
+$upscope $end
+$upscope $end
+$scope module microcode $end
+$var wire 1 < clk $end
+$var wire 6 F opcode [5:0] $end
+$var wire 1 G next_segment_signal $end
+$var reg 8 H code_ip [7:0] $end
+$var reg 32 I ctrl [31:0] $end
+$var integer 32 J microinstr_ctr [31:0] $end
+$var integer 32 K microunit_running [31:0] $end
+$var integer 32 L segment_counter [31:0] $end
+$scope task microinstr $end
+$var reg 31 M control [30:0] $end
+$var integer 32 N is_eos [31:0] $end
+$var integer 32 O is_sos [31:0] $end
+$upscope $end
+$scope task microinstr_finish $end
+$upscope $end
+$upscope $end
+$scope module progmem $end
+$var wire 32 P address [31:0] $end
+$var wire 32 Q instruction [31:0] $end
+$upscope $end
+$scope module registers $end
+$var wire 5 R readreg1 [4:0] $end
+$var wire 5 S readreg2 [4:0] $end
+$var wire 32 T regout1 [31:0] $end
+$var wire 32 U regout2 [31:0] $end
+$var wire 1 ' regwr $end
+$var wire 32 V writedata [31:0] $end
+$var wire 5 W writereg [4:0] $end
+$scope begin $unm_blk_12 $end
+$var integer 32 X i [31:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b100000 X
+b0 W
+b0 V
+b0 U
+b0 T
+b0 S
+b0 R
+b0 Q
+b0 P
+b1 O
+b1 N
+b110000000 M
+b1010 L
+b1 K
+b100000000 J
+b0 I
+b0 H
+0G
+b0 F
+b100000000 E
+bz D
+b0 C
+b0 B
+b0 A
+b0 @
+b0 ?
+b10 >
+b0 =
+0<
+b0 ;
+0:
+09
+b0 8
+07
+b1 6
+b10 5
+b0 4
+03
+02
+01
+00
+b0 /
+b0 .
+bz -
+b0 ,
+b0 +
+0*
+b0 )
+b0 (
+0'
+b0 &
+b0 %
+1$
+b0 #
+b0 "
+b0 !
+$end
+#1
+b1 F
+b10 6
+b100000000000000000000000000 4
+b100000000000000000000000000 Q
+b1 =
+b1 P
+0$
+b10101100 !
+b10101100 B
+b10101100 &
+b10101100 A
+b10101100 #
+b10101100 ?
+b10101100 )
+b10101100 T
+b10101100 "
+b10101100 C
+b10101100 (
+b10101100 U
+b10101100 .
+b10101100 V
+b10101100 -
+b10101100 D
+1G
+1'
+1:
+11
+12
+17
+b1 H
+b11000110001 8
+b11000110001 I
+1<
+#2
+0<
+#3
+b0 F
+b11 6
+b0 4
+b0 Q
+b10 =
+b10 P
+bz -
+bz D
+0'
+10
+01
+02
+b1100000001 8
+b1100000001 I
+1<
+#4
+0<
+#5
+b1 F
+b100 6
+b100000000000000000000000000 4
+b100000000000000000000000000 Q
+b11 =
+b11 P
+b10101100 -
+b10101100 D
+1'
+00
+11
+12
+b11000110001 8
+b11000110001 I
+b0 H
+1<
+#6
+0<
+#7
+b0 F
+b101 6
+b0 4
+b0 Q
+b100 =
+b100 P
+bz -
+bz D
+0'
+10
+01
+02
+b1100000001 8
+b1100000001 I
+b1 H
+1<
+#8
+0<
+#9
+b111111 F
+b110 6
+b11111100000000000000000000000000 4
+b11111100000000000000000000000000 Q
+b101 =
+b101 P
+b10101100 -
+b10101100 D
+1'
+00
+11
+12
+b11000110001 8
+b11000110001 I
+b0 H
+1<
+#10
+0<
+#11
+x$
+bx %
+bx W
+bx "
+bx C
+bx (
+bx U
+bx +
+bx S
+bx #
+bx ?
+bx )
+bx T
+bx ,
+bx R
+bx F
+b111 6
+bx 4
+bx Q
+b110 =
+b110 P
+bx .
+bx V
+bx !
+bx B
+bx &
+bx A
+bx /
+bx @
+bz -
+bz D
+0G
+0'
+0:
+01
+02
+07
+b0 8
+b0 I
+b0 K
+1<
+#12
+0<
+#13
+1<
+#14
+0<
+#15
+1<
+#16
+0<
+#17
+1<
+#18
+0<
+#19
+1<
+#20
+0<
+#21
+1<
+#22
+0<
+#23
+1<
+#24
+0<
+#25
+1<
+#26
+0<
+#27
+1<
+#28
+0<
+#29
+1<
+#30
+0<
+#31
+1<
+#32
+0<
+#33
+1<
+#34
+0<
+#35
+1<
+#36
+0<
+#37
+1<
+#38
+0<
+#39
+1<
+#40
+0<
+#41
+1<
+#42
+0<
+#43
+1<
+#44
+0<
+#45
+1<
+#46
+0<
+#47
+1<
+#48
+0<
+#49
+1<
+#50
+0<
