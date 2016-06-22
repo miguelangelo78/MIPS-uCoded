@@ -28,7 +28,7 @@ module Datamem(address, writedata, readdata, mrd, mwr);
 	input [31:0]address, writedata;
 	input mrd, mwr;
 	output reg [31:0] readdata;
-	reg [31:0] mem [0:256];
+	reg [31:0] mem [0:256]; 
 	
 	assign readdata = mrd ? mem[address] : 'hz;
 	
