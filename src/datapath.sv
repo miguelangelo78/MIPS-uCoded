@@ -76,33 +76,42 @@ endmodule
 
 module datapath;
 	/* Generate clock: */
-	reg clk; always #1 clk = ~clk;
+	reg clk; always #1 clk = en_clk ? ~clk : clk;
+	reg en_clk;
 	
 	/* Instantiate microcode controller: */
-	wire [`CTRL_WIDTH-1:0] ctrl;
-	Microcode microcode(clk, ctrl, instruction[31:26]);
+	wire [`CTRL_WIDTH:0] ctrl;
+	wire microcode_done; /* Signals when the microcode has finished executing a certain segment */
+	reg microcode_restart; /* Triggers the execution of the microcode unit */
+	Microcode microcode(clk, ctrl, instruction[31:26], microcode_done, microcode_restart);
 	
 	/* Control wires (connect it to microcode controller): */
-	wire eip_inc = ctrl[0];
-	wire regdst = ctrl[1];
-	wire jump = ctrl[2];
-	wire branch = ctrl[3];
-	wire memread = ctrl[4];
-	wire memtoreg = ctrl[5];
-	wire [1:0] aluop = ctrl[7:6];
-	wire memwrite = ctrl[8];
-	wire alusrc = ctrl[9];
-	wire regwrite = ctrl[10];
+	wire eip_inc = microcode_done;
+	wire regdst = ctrl[0];
+	wire jump = ctrl[1];
+	wire branch = ctrl[2];
+	wire memread = ctrl[3];
+	wire memtoreg = ctrl[4];
+	wire [1:0] aluop = ctrl[6:5];
+	wire memwrite = ctrl[7];
+	wire alusrc = ctrl[8];
+	wire regwrite = ctrl[9];
 	
 	/* Program Counter: */
 	reg [31:0] eip = 0;
 	wire [31:0] eip_next = eip + 1;
-	always@(posedge eip_inc or posedge clk) begin 
-		if(eip_inc)
+	
+	always@(posedge eip_inc or posedge clk) begin
+		/* Trigger microcode execution: */
+		if(eip_inc) begin
 			eip <= 
 				jump ? {eip_next[31:28], (instruction[25:0] << 2)} : 
 				branch & zero ?  eip_next + ({16'h0, instruction[15:0]} << 2) : eip_next;
+			microcode_restart <= 1;
+		end
 	end
+	
+	always@(negedge clk) microcode_restart = 0; /* Bring the microcode trigger down */
 	
 	/* Program Memory: */
 	wire [31:0] instruction;
@@ -147,7 +156,19 @@ module datapath;
 	initial begin
 		$dumpfile("datapath.vcd");
 		$dumpvars(0, datapath);
-		clk = 0;		
+		
+		/* Initialize: */
+		microcode_restart = 0;
+		en_clk = 0;
+		clk = 0;
+		
+		/* Kickstart: */
+		#1;
+		clk = 1;
+		microcode_restart = 1;
+		en_clk = 1;
+		
+		/* Let it run for a while: */
 		#50 $finish;
 	end
 endmodule

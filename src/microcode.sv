@@ -1,42 +1,50 @@
 `define CTRL_WIDTH 32
 `define CTRL_DEPTH 256
 
-module Microcode(clk, ctrl, opcode);
+module Microcode(clk, ctrl, opcode, eos, sos);
 	
 input clk;
-output reg [`CTRL_WIDTH-1:0] ctrl = 0;
+output reg [`CTRL_WIDTH:0] ctrl = 0;
 input [5:0] opcode;
-
-wire next_segment_signal = ctrl[0]; /* First bit of output will signal an instruction fetch request */
+/* End of segment: signals the outer system that its execution is finished, and will wait until a sos signal is received */
+output eos;
+assign eos = ctrl[`CTRL_WIDTH]; /* It's the very last bit of the control bus */
+/* Start of segment: triggers the execution of the next segment */
+input sos;
 
 /* Local Variables: */
 reg [7:0] code_ip = 0;
-reg [`CTRL_WIDTH-1:0] code [0:`CTRL_DEPTH];
+reg [`CTRL_WIDTH:0] code [0:`CTRL_DEPTH];
 reg [7:0] seg_start [10]; /* Start of the segment */
 integer segment_counter = 0;
 integer microinstr_ctr = 0;
 integer microunit_running = 1;
 
+task check_microcode_running; begin
+	microunit_running = opcode == ~6'h0 ? 0 : 1;
+end endtask
+
 always@(posedge clk) begin
-	if(opcode == ~6'h0) microunit_running = 0;
-	
-	if(code_ip != 'hFF && microunit_running) begin
-		if(next_segment_signal) begin 
-			/* Jump to segment before fetching control: */
-			code_ip = seg_start[opcode];
-			ctrl = code[code_ip];
-		end else begin
-			ctrl = code[code_ip];
-			/* Fetch next microcode (sequentially) */
-			code_ip = code_ip + 1;
-		end
-	end else begin
-		ctrl = 0; /* Microcode unit is frozen. Needs to be restarted */
+	/* Check for invalid/halt opcode: */
+	check_microcode_running;
+	if(microunit_running && code_ip != 'hFF && !eos) begin
+		/* Only continue sequentially when EOS is 0 */
+		ctrl = code[code_ip];
+		code_ip = code_ip + 1;
+	 end else begin end; /* Microcode unit is frozen. Needs to be restarted */
+end
+
+always@(posedge sos) begin
+	check_microcode_running;
+	/* Jump to segment before fetching control: */
+	if(microunit_running) begin
+		code_ip = seg_start[opcode];
+		ctrl = code[code_ip];
 	end
 end
 
 task microinstr;
-	input reg [30:0] control;
+	input reg [31:0] control;
 	input integer is_sos; /* Is start of segment? */
 	input integer is_eos; /* Is end of segment? */
 begin
@@ -47,7 +55,7 @@ begin
 	end
 	
 	/* Generate Segment Terminator signal: */
-	code[microinstr_ctr] = {control, is_eos ? 1'b1 : 1'b0};
+	code[microinstr_ctr] = {is_eos ? 1'b1 : 1'b0, control};
 	microinstr_ctr = microinstr_ctr + 1;
 end endtask
 
@@ -63,8 +71,11 @@ end endtask
 /************************** MICROCODE BEGIN SECTION **************************/
 initial begin
 	/* Program Microcode for each instruction here: */
-	microinstr(31'b1100011000, 1, 1); /* LW */
-	microinstr(31'b0110000000, 1, 1); /* SW */
+	microinstr(32'b1100011000, 1, 0); /* LW */
+	microinstr(32'b1100011000, 0, 0); /* LW */
+	microinstr(32'b1100011000, 0, 0); /* LW */
+	microinstr(32'b1100011000, 0, 1); /* LW */
+	microinstr(32'b0110000000, 1, 1); /* SW */
 	/* ADD */
 	/* SUB */
 	/* AND */
