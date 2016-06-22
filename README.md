@@ -4,3 +4,5 @@ This repository holds an example unpipelined datapath of a MIPS implementation u
 
 The microcode unit resides in the Control section.
 ![Microcode memory structure](http://image.prntscr.com/image/0509db7df20143a6a750fb69b1ce5c03.png)
+
+![Design Overview](http://image.prntscr.com/image/ab2b98e2fb1f45f1a1366ad69b45fea0.png)
