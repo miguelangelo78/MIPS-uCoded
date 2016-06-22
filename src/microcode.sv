@@ -1,8 +1,11 @@
 `define CTRL_WIDTH 32
 `define CTRL_DEPTH 256
+`define SEGMENT_MAXCOUNT 256
+`define CTRL_DEPTH_ENC ($clog2(`CTRL_DEPTH) - 1)
 
 module Microcode(clk, ctrl, opcode, eos, sos);
-	
+
+/************************* PORT DEFINITIONS *************************/
 input clk;
 output reg [`CTRL_WIDTH:0] ctrl = 0;
 input [5:0] opcode;
@@ -12,18 +15,15 @@ assign eos = ctrl[`CTRL_WIDTH]; /* It's the very last bit of the control bus */
 /* Start of segment: triggers the execution of the next segment */
 input sos;
 
-/* Local Variables: */
-reg [7:0] code_ip = 0;
+/************************* LOCAL VARIABLES *************************/
+reg [`CTRL_DEPTH_ENC:0] code_ip = 0;
 reg [`CTRL_WIDTH:0] code [0:`CTRL_DEPTH];
-reg [7:0] seg_start [10]; /* Start of the segment */
+reg [`CTRL_DEPTH_ENC:0] seg_start [`SEGMENT_MAXCOUNT]; /* Start of the segment */
 integer segment_counter = 0;
 integer microinstr_ctr = 0;
 integer microunit_running = 1;
 
-task check_microcode_running; begin
-	microunit_running = opcode == ~6'h0 ? 0 : 1;
-end endtask
-
+/************************* SYSTEM PROCESSES *************************/
 always@(posedge clk) begin
 	/* Check for invalid/halt opcode: */
 	check_microcode_running;
@@ -42,6 +42,12 @@ always@(posedge sos) begin
 		ctrl = code[code_ip];
 	end
 end
+
+
+/************************* FUNCTIONS *************************/
+task check_microcode_running; begin
+	microunit_running = opcode == ~6'h0 ? 0 : 1;
+end endtask
 
 task microinstr;
 	input reg [31:0] control;
@@ -64,7 +70,7 @@ task microinstr_finish; begin
 	for(microinstr_ctr=microinstr_ctr; microinstr_ctr < `CTRL_DEPTH; microinstr_ctr++) 
 		code[microinstr_ctr] = 0;
 	/* Fill the rest of the segments with invalid pointers */
-	for(segment_counter = segment_counter; segment_counter < 10; segment_counter++)
+	for(segment_counter = segment_counter; segment_counter < `SEGMENT_MAXCOUNT; segment_counter++)
 		seg_start[segment_counter] = ~0;
 end endtask
 
