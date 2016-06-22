@@ -2,6 +2,7 @@
 `define CTRL_DEPTH 256
 `define SEGMENT_MAXCOUNT 256
 `define CTRL_DEPTH_ENC ($clog2(`CTRL_DEPTH) - 1)
+`define SEGMENT_MAXCOUNT_ENC ($clog2(`SEGMENT_MAXCOUNT) - 1)
 
 module Microcode(clk, ctrl, opcode, eos, sos);
 
@@ -16,12 +17,12 @@ assign eos = ctrl[`CTRL_WIDTH]; /* It's the very last bit of the control bus */
 input sos;
 
 /************************* LOCAL VARIABLES *************************/
-reg [`CTRL_DEPTH_ENC:0] code_ip = 0;
-reg [`CTRL_WIDTH:0] code [0:`CTRL_DEPTH];
-reg [`CTRL_DEPTH_ENC:0] seg_start [`SEGMENT_MAXCOUNT]; /* Start of the segment */
+reg [`CTRL_DEPTH_ENC:0] code_ip = 0; /* Microcode instruction pointer */
+reg [`CTRL_WIDTH:0] code [0:`CTRL_DEPTH]; /* Microcode memory */
+reg [`SEGMENT_MAXCOUNT_ENC:0] seg_start [`SEGMENT_MAXCOUNT]; /* Start of the segment */
 integer segment_counter = 0;
 integer microinstr_ctr = 0;
-integer microunit_running = 1;
+reg microunit_running = 1;
 
 /************************* SYSTEM PROCESSES *************************/
 always@(posedge clk) begin
@@ -46,7 +47,7 @@ end
 
 /************************* FUNCTIONS *************************/
 task check_microcode_running; begin
-	microunit_running = opcode == ~6'h0 ? 0 : 1;
+	microunit_running = opcode == ~6'h0 ? 1'b0 : 1'b1;
 end endtask
 
 task microinstr;

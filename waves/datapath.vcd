@@ -1,5 +1,5 @@
 $date
-	Wed Jun 22 22:08:35 2016
+	Wed Jun 22 22:20:29 2016
 $end
 $version
 	Icarus Verilog
@@ -64,8 +64,8 @@ $var wire 1 @ sos $end
 $var wire 1 1 eos $end
 $var reg 8 J code_ip [7:0] $end
 $var reg 33 K ctrl [32:0] $end
-$var integer 32 L microinstr_ctr [31:0] $end
-$var integer 32 M microunit_running [31:0] $end
+$var reg 1 L microunit_running $end
+$var integer 32 M microinstr_ctr [31:0] $end
 $var integer 32 N segment_counter [31:0] $end
 $scope task check_microcode_running $end
 $upscope $end
@@ -110,8 +110,8 @@ b1 Q
 b1 P
 b110000000 O
 b100000000 N
-b1 M
-b100000000 L
+b100000000 M
+1L
 b0 K
 b0 J
 b0 I
@@ -325,7 +325,7 @@ b11 J
 #28
 0=
 #29
-b0 M
+0L
 b111111 I
 1@
 b110 8
@@ -356,7 +356,7 @@ b0xxxxxxxxxxxxxxxx 0
 b0xxxxxxxxxxxxxxxx C
 bx &
 bx Y
-b0x M
+xL
 bx "
 bx F
 bx )
