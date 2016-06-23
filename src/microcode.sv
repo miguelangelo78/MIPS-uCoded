@@ -4,6 +4,10 @@
 `define CTRL_DEPTH_ENC ($clog2(`CTRL_DEPTH) - 1)
 `define SEGMENT_MAXCOUNT_ENC ($clog2(`SEGMENT_MAXCOUNT) - 1)
 
+/* Change this macro to 0 to convert the microcode unit 
+ * into a multicycle microcode unit */
+`define SINGLECYCLE 0
+
 module Microcode(clk, ctrl, opcode, eos, sos);
 
 /************************* PORT DEFINITIONS *************************/
@@ -78,10 +82,8 @@ end endtask
 /************************** MICROCODE BEGIN SECTION **************************/
 initial begin
 	/* Program Microcode for each instruction here: */
-	microinstr(32'b1100011000, 1, 0); /* LW */
-	microinstr(32'b1100011000, 0, 0); /* LW */
-	microinstr(32'b1100011000, 0, 0); /* LW */
-	microinstr(32'b1100011000, 0, 1); /* LW */
+if(`SINGLECYCLE) begin
+	microinstr(32'b1100011000, 1, 1); /* LW */
 	microinstr(32'b0110000000, 1, 1); /* SW */
 	/* ADD */
 	/* SUB */
@@ -90,6 +92,17 @@ initial begin
 	/* SLT */
 	/* BEQ */
 	/* JMP */
+end else begin
+	microinstr(32'b1100011000, 1, 1); /* LW */
+	microinstr(32'b0110000000, 1, 1); /* SW */
+	/* ADD */
+	/* SUB */
+	/* AND */
+	/* OR */
+	/* SLT */
+	/* BEQ */
+	/* JMP */
+end
 	microinstr_finish;
 end
 endmodule
