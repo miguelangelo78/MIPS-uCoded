@@ -1,5 +1,5 @@
 $date
-	Thu Jun 23 02:33:29 2016
+	Fri Jun 24 00:46:15 2016
 $end
 $version
 	Icarus Verilog
@@ -73,71 +73,101 @@ $var wire 32 S data_in [31:0] $end
 $var wire 1 7 memread $end
 $var wire 1 5 memwrite $end
 $var wire 32 T data_out [31:0] $end
-$scope begin $unm_blk_12 $end
-$var integer 32 U i [31:0] $end
-$upscope $end
 $upscope $end
 $scope module microcode $end
 $var wire 1 F clk $end
-$var wire 6 V opcode [5:0] $end
+$var wire 6 U opcode [5:0] $end
 $var wire 1 H sos $end
 $var wire 1 4 eos $end
-$var reg 8 W code_ip [7:0] $end
-$var reg 33 X ctrl [32:0] $end
-$var reg 1 Y microunit_running $end
-$var integer 32 Z microinstr_ctr [31:0] $end
-$var integer 32 [ segment_counter [31:0] $end
+$var reg 8 V code_ip [7:0] $end
+$var reg 33 W ctrl [32:0] $end
+$var reg 1 X flag_jmp $end
+$var reg 8 Y flag_jmp_addr [7:0] $end
+$var reg 32 Z func_fmt [31:0] $end
+$var reg 2 [ instruction_type [1:0] $end
+$var reg 1 \ microunit_init $end
+$var reg 1 ] microunit_running $end
+$var reg 8 ^ stack_ptr [7:0] $end
+$var reg 1 _ zero $end
+$var integer 32 ` int_segment_counter [31:0] $end
+$var integer 32 a microinstr_ctr [31:0] $end
+$var integer 32 b segment_counter [31:0] $end
 $scope task check_microcode_running $end
 $upscope $end
+$scope task exec_microinstruction $end
+$var reg 8 c address [7:0] $end
+$upscope $end
 $scope task microinstr $end
-$var reg 32 \ control [31:0] $end
-$var integer 32 ] is_eos [31:0] $end
-$var integer 32 ^ is_sos [31:0] $end
+$var reg 32 d control [31:0] $end
+$var reg 32 e func [31:0] $end
+$var reg 2 f seg_type [1:0] $end
+$var integer 32 g is_eos [31:0] $end
+$var integer 32 h is_sos [31:0] $end
 $upscope $end
 $scope task microinstr_finish $end
 $upscope $end
+$scope task pop_stack $end
+$upscope $end
+$scope task push_stack $end
+$var reg 8 i address [7:0] $end
+$upscope $end
+$scope task schedule_jmp $end
+$var reg 8 j new_addr [7:0] $end
+$upscope $end
 $upscope $end
 $scope module pc $end
-$var wire 32 _ ip_next [31:0] $end
+$var wire 32 k ip_next [31:0] $end
 $var wire 1 $ pc_wr $end
-$var reg 32 ` ip [31:0] $end
+$var reg 32 l ip [31:0] $end
 $upscope $end
 $scope module registers $end
 $var wire 1 F clk $end
-$var wire 5 a readreg1 [4:0] $end
-$var wire 5 b readreg2 [4:0] $end
+$var wire 5 m readreg1 [4:0] $end
+$var wire 5 n readreg2 [4:0] $end
 $var wire 1 ) regwr $end
-$var wire 32 c writedata [31:0] $end
-$var wire 5 d writereg [4:0] $end
-$var reg 32 e outA [31:0] $end
-$var reg 32 f outB [31:0] $end
-$scope begin $unm_blk_14 $end
-$var integer 32 g i [31:0] $end
+$var wire 32 o writedata [31:0] $end
+$var wire 5 p writereg [4:0] $end
+$var reg 32 q outA [31:0] $end
+$var reg 32 r outB [31:0] $end
+$scope begin $unm_blk_27 $end
+$var integer 32 s i [31:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
-b100000 g
+b100000 s
+b0 r
+b0 q
+b0 p
+b0 o
+b0 n
+b0 m
+b0 l
+b0 k
+bx j
+bx i
+b1 h
+b1 g
 b0 f
 b0 e
-b0 d
-b0 c
-b0 b
-b0 a
-b0 `
-b0 _
-b1 ^
-b1 ]
-b110000000 \
-b100000000 [
-b100000000 Z
-1Y
-b0 X
+b1001010 d
+bx c
+b100000000 b
+b100000000 a
+b100000000 `
+0_
+b0 ^
+1]
+0\
+b0 [
+b0 Z
+b11111111 Y
+0X
 b0 W
 b0 V
-b100000000 U
+b0 U
 bz T
 b0 S
 b0 R
@@ -192,25 +222,18 @@ bz "
 bz !
 $end
 #1
-1%
-b0 (
-b0 L
-b110 @
-b110 I
-b0 "
-b0 P
-b0 !
-b0 N
-b0 8
-b0 T
-14
-b1 E
-b10 /
-15
-17
-b0 W
-b100000000000000000000001100011000 A
-b100000000000000000000001100011000 X
+1$
+1-
+b1 A
+b1 W
+b1 ^
+b1 i
+1X
+b100 Y
+b100 j
+b10000000000000000000000000010 Z
+b0 c
+1\
 bz :
 bz Q
 1H
@@ -220,40 +243,82 @@ bz Q
 0H
 0F
 #3
-b0 :
-b0 Q
+b10 ^
+b101 i
+b10 Y
+b10 j
+b10000000000000000000000000001 Z
+b100 c
+1X
+b100 V
 1F
 #4
 0F
 #5
+b11 ^
+b11 i
+b110 Y
+b110 j
+b10000000000000000000000000011 Z
+b10 c
+1X
+b10 V
 1F
 #6
 0F
 #7
+14
+b100000000000000000000000000000001 A
+b100000000000000000000000000000001 W
+b0 Z
+b110 c
+0X
+b110 V
 1F
 #8
 0F
 #9
+1X
+b11 Y
+b11 j
+b10 ^
 1F
 #10
 0F
 #11
+b11 c
+0X
+b11 V
 1F
 #12
 0F
 #13
+1X
+b101 Y
+b101 j
+b1 ^
 1F
 #14
 0F
 #15
+b101 c
+0X
+b101 V
 1F
 #16
 0F
 #17
+1X
+b1 Y
+b1 j
+b0 ^
 1F
 #18
 0F
 #19
+b1 c
+0X
+b1 V
 1F
 #20
 0F

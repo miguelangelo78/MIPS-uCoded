@@ -19,8 +19,18 @@ module Memory(address, data_in, data_out, memread, memwrite);
 	always@(posedge memwrite) memory[address] = data_in;
 		
 	initial begin
-		integer i;
-		for(i = 0; i < 256; i++) memory[i] = 'hBD;
+		memory[0] = {6'h0, 5'h0,5'h0,16'h0}; /* LW */
+		memory[1] = {6'h1, 5'h0,5'h0,16'h0}; /* SW */
+		memory[2] = {6'h0, 5'h0,5'h0,16'h0}; /* LW */
+		memory[3] = {6'h1, 5'h0,5'h0,16'h0}; /* SW */
+		memory[4] = {6'h0, 5'h0,5'h0,16'h0}; /* LW */
+		/* ADD */
+		/* SUB */
+		/* BEQ */
+		/* JMP */
+		
+		/* End of memory: */
+		memory[5] = {~6'h0, 26'h0}; /* Invalid Op */
 	end
 endmodule
 
@@ -95,8 +105,6 @@ module datapath_multicycle;
 	
 	/* Bring the microcode trigger down every negative clock edge: */
 	always@(negedge clk) microcode_restart <= 0;
-	/* Restart the microcode unit everytime it finishes its execution: */
-	always@(posedge microcode_done) microcode_restart <= 1;
 	
 	/* Control wires (connect it to microcode controller): */
 	wire pcwritecond = ctrl[0];
@@ -145,7 +153,7 @@ module datapath_multicycle;
 	
 	/* ALU: */
 	wire [31:0] opA = alusrca ? outA : ip;
-	wire [31:0] opB = alusrcb == 2'b00 ? outB : alusrcb == 2'b01 ? 4 : alusrcb == 2'b10 ? {16'h0,instr_out[15:11]} : {16'h0,instr_out[15:11]} << 2;
+	wire [31:0] opB = alusrcb == 2'b00 ? outB : alusrcb == 2'b01 ? 1 : alusrcb == 2'b10 ? {16'h0,instr_out[15:11]} : {16'h0,instr_out[15:11]} << 2;
 	wire [3:0] func =
 		/* ALU Control: */
 		!aluop   ? 4'b0010 :
@@ -165,6 +173,7 @@ module datapath_multicycle;
 	wire [31:0] aluout;
 	ALU alu(clk, opA, opB, func, zero, result, aluout);
 	
+	/* Testbench: */
 	initial begin
 		$dumpfile("datapath_multicycle.vcd");
 		$dumpvars(0, datapath_multicycle);
