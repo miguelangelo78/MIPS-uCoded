@@ -179,16 +179,16 @@ if(`SINGLECYCLE) begin
 	/* BEQ */
 	/* JMP */
 end else begin
-	microinstr(32'b0000000000000001, {4'b0001, 28'd2}, 1, 0, 0); /* LW and jmp to segment 2 */
+	microinstr(32'b0000000000000001, {4'b0010, 28'd1}, 1, 0, 0); /* LW and jmp to segment 2 */
 	microinstr(32'b0000000000000001, 0, 0, 1, 0); /* Then go idle */
 	
-	microinstr(32'b0000000000000001, {4'b0001, 28'd3}, 1, 0, 0); /* LW and jmp to segment 3 */
-	microinstr(32'b0000000000000001, 0, 0, 1, 0); /* then return (pop stack) */
+	microinstr(32'b0000000000000001, {4'b0010, 28'd2}, 1, 0, 1); /* LW and jmp to segment 3 */
+	microinstr(32'b0000000000000001, 0, 0, 1, 1); /* then return (pop stack) */
 	
-	microinstr(32'b0000000000000001, {4'b0001, 28'd1}, 1, 0, 0); /* LW and jmp to segment 1 */
-	microinstr(32'b0000000000000001, 0, 0, 1, 0); /* then return (pop stack) */
+	microinstr(32'b0000000000000001, {4'b0010, 28'd0}, 1, 0, 1); /* LW and jmp to segment 1 */
+	microinstr(32'b0000000000000001, 0, 0, 1, 1); /* then return (pop stack) */
 	
-	microinstr(32'b0000000000000001, 0, 1, 1, 0); /* LW then return (pop stack) */
+	microinstr(32'b0000000000000001, 0, 1, 1, 1); /* LW then return (pop stack) */
 	
 	microinstr(32'b0000000001001010, 0, 1, 1, 0); /* SW */
 	/* ADD */
